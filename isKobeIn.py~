@@ -14,20 +14,25 @@ def error_show_usage():
 def is_he_playing(is_in_game):
     game_page = requests.get('https://sports.yahoo.com/nba/san-antonio-spurs-dallas-mavericks-2016041306/') # CHANGE URL TO ACTUAL GAME URL
     soup = BeautifulSoup(game_page.text, "html.parser")
-    player_rows = soup.find("table", attrs={"summary": "PLAYERS"}).find("tbody").find_all("tr")
+    player_tables = soup.find_all("table", attrs={"summary": "PLAYERS"})
 
-    # At this point, player_rows contains all the rows for each player
+    for player_table in player_tables:
+        player_rows = player_table.find("tbody").find_all("tr")
 
-    for player in player_rows:
-        if player.find("div", attrs={"data-entity-type": "player"}).find(text=True, recursive=False) == "Kyle Anderson":
-            if player.find("th", attrs={"class": "on-court"}) is not None:        
-                is_in_game = True
-                break
-            else:
-                is_in_game = False
-                break
+        for player in player_rows:
+            print player.find("div", attrs={"data-entity-type": "player"})
+    return is_in_game
+"""
+            if player.find("div", attrs={"data-entity-type": "player"}).find(text=True, recursive=False) == "Kyle Anderson":
+                if player.find("th", attrs={"class": "on-court"}) is not None:        
+                    is_in_game = True
+                    return is_in_game
+                else:
+                    is_in_game = False
+                    return is_in_game
 
     return is_in_game
+"""
 
 def send_notification(email, password, is_in_game):
     if is_in_game:
